@@ -1,19 +1,33 @@
 import axios from "axios";
 
+// ======================================================
+// API BASE URL
+// ======================================================
+//
+// Local development:
+// VITE_API_URL=http://localhost:5000
+//
+// Production:
+// VITE_API_URL=https://movie-review-backend-c81i.onrender.com
+//
+// ======================================================
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000";
+
 
 // ======================================================
 // AXIOS INSTANCE
 // ======================================================
 
 const api = axios.create({
-  baseURL:
-    "http://localhost:5000/api",
+  baseURL: `${API_URL}/api`,
 
   timeout: 10000,
 
   headers: {
-    "Content-Type":
-      "application/json",
+    "Content-Type": "application/json",
   },
 });
 
@@ -26,9 +40,7 @@ api.interceptors.request.use(
   (config) => {
 
     const storedToken =
-      localStorage.getItem(
-        "token"
-      );
+      localStorage.getItem("token");
 
 
     console.log(
@@ -37,6 +49,10 @@ api.interceptors.request.use(
       `${config.baseURL}${config.url}`
     );
 
+
+    // ==================================================
+    // ATTACH JWT TOKEN
+    // ==================================================
 
     if (storedToken) {
 
@@ -48,12 +64,13 @@ api.interceptors.request.use(
       // Bearer Bearer eyJ...
 
       if (
-        token.startsWith(
-          "Bearer "
-        )
+        token.startsWith("Bearer ")
       ) {
+
         token =
-          token.substring(7).trim();
+          token
+            .substring(7)
+            .trim();
       }
 
 
@@ -80,6 +97,11 @@ api.interceptors.request.use(
     return config;
   },
 
+
+  // ==================================================
+  // REQUEST ERROR
+  // ==================================================
+
   (error) => {
 
     console.error(
@@ -100,6 +122,10 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
 
+  // ====================================================
+  // SUCCESS RESPONSE
+  // ====================================================
+
   (response) => {
 
     console.log(
@@ -112,6 +138,10 @@ api.interceptors.response.use(
     return response;
   },
 
+
+  // ====================================================
+  // ERROR RESPONSE
+  // ====================================================
 
   (error) => {
 
@@ -164,5 +194,9 @@ api.interceptors.response.use(
   }
 );
 
+
+// ======================================================
+// EXPORT
+// ======================================================
 
 export default api;
