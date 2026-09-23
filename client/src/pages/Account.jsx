@@ -91,6 +91,12 @@ function Account() {
   ] = useState(null);
 
 
+  const [
+    deleteReviewId,
+    setDeleteReviewId,
+  ] = useState(null);
+
+
   // ======================================================
   // LOAD ACCOUNT
   // ======================================================
@@ -940,86 +946,51 @@ function Account() {
   // DELETE REVIEW
   // ======================================================
 
-  const handleDeleteReview =
-    async (
-      reviewId
-    ) => {
+  const handleDeleteReview = (reviewId) => {
+    setDeleteReviewId(reviewId);
+  };
 
-      const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this review?"
-        );
+  const closeDeleteReview = () => {
+    if (deletingReviewId) return;
+    setDeleteReviewId(null);
+  };
 
+  const confirmDeleteReview = async () => {
+    if (!deleteReviewId) return;
 
-      if (!confirmed) {
-        return;
-      }
+    const reviewId = deleteReviewId;
 
+    try {
+      setDeletingReviewId(reviewId);
 
-      try {
+      const response = await api.delete(`/reviews/${reviewId}`);
 
-        setDeletingReviewId(
-          reviewId
-        );
-
-
-        const response =
-          await api.delete(
-            `/reviews/${reviewId}`
-          );
-
-
-        if (
-          response.data
-            ?.success !== true
-        ) {
-
-          throw new Error(
-            response.data
-              ?.message ||
-              "Unable to delete the review."
-          );
-        }
-
-
-        setReviews(
-          (
-            previousReviews
-          ) =>
-            previousReviews.filter(
-              (review) =>
-                String(
-                  review._id
-                ) !==
-                String(
-                  reviewId
-                )
-            )
-        );
-
-
-      } catch (err) {
-
-        console.error(
-          "Failed to delete review:",
-          err
-        );
-
-
-        alert(
-          err.response?.data
-            ?.message ||
-            err.message ||
+      if (response.data?.success !== true) {
+        throw new Error(
+          response.data?.message ||
             "Unable to delete the review."
         );
-
-      } finally {
-
-        setDeletingReviewId(
-          null
-        );
       }
-    };
+
+      setReviews((previousReviews) =>
+        previousReviews.filter(
+          (review) => String(review._id) !== String(reviewId)
+        )
+      );
+
+      setDeleteReviewId(null);
+    } catch (err) {
+      console.error("Failed to delete review:", err);
+
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "Unable to delete the review."
+      );
+    } finally {
+      setDeletingReviewId(null);
+    }
+  };
 
 
   // ======================================================
@@ -1666,6 +1637,61 @@ function Account() {
 
         </div>
 
+      )}
+
+
+
+      {deleteReviewId && (
+        <div
+          className="delete-review-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-review-title"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              !deletingReviewId
+            ) {
+              closeDeleteReview();
+            }
+          }}
+        >
+          <div className="delete-review-modal">
+            <div className="delete-review-modal-icon">!</div>
+
+            <h3 id="delete-review-title">
+              Delete Review
+            </h3>
+
+            <p>
+              Are you sure you want to delete this review?
+            </p>
+
+            <p className="delete-review-modal-warning">
+              This action cannot be undone.
+            </p>
+
+            <div className="delete-review-modal-actions">
+              <button
+                type="button"
+                className="delete-review-cancel-btn"
+                onClick={closeDeleteReview}
+                disabled={Boolean(deletingReviewId)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="delete-review-confirm-btn"
+                onClick={confirmDeleteReview}
+                disabled={Boolean(deletingReviewId)}
+              >
+                {deletingReviewId ? "Deleting..." : "Delete Review"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </section>

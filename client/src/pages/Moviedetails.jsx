@@ -17,12 +17,8 @@ function Moviedetails() {
   const [loading, setLoading] = useState(true);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [deletingReviewId, setDeletingReviewId] = useState(null);
+  const [deleteReviewId, setDeleteReviewId] = useState(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
-
-  const [editingReview, setEditingReview] = useState(null);
-  const [editRating, setEditRating] = useState(0);
-  const [editComment, setEditComment] = useState("");
-  const [updatingReview, setUpdatingReview] = useState(false);
 
   const [error, setError] = useState("");
   const [reviewError, setReviewError] = useState("");
@@ -168,7 +164,7 @@ function Moviedetails() {
    */
   useEffect(() => {
     const dialogOpen =
-      showReviewForm || Boolean(editingReview);
+      showReviewForm || Boolean(deleteReviewId);
 
     if (!dialogOpen) {
       document.body.style.overflow = "";
@@ -181,7 +177,7 @@ function Moviedetails() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [showReviewForm, editingReview]);
+  }, [showReviewForm, deleteReviewId]);
 
   /*
    * =========================================================
@@ -473,93 +469,64 @@ function Moviedetails() {
 
   /*
    * =========================================================
-   * EDIT REVIEW
+   * DELETE REVIEW
    * =========================================================
    */
 
-  const handleOpenEditReview = (review) => {
-    setEditingReview(review);
-    setEditRating(Number(review?.rating) || 0);
-    setEditComment(review?.comment || "");
+  const handleDeleteReview = (reviewId) => {
     setReviewError("");
     setReviewSuccess("");
+    setDeleteReviewId(reviewId);
   };
 
-  const handleCloseEditReview = () => {
-    if (updatingReview) return;
-
-    setEditingReview(null);
-    setEditRating(0);
-    setEditComment("");
+  const closeDeleteReview = () => {
+    if (deletingReviewId) return;
+    setDeleteReviewId(null);
     setReviewError("");
   };
 
-  const handleUpdateReview = async (event) => {
-    event.preventDefault();
-
-    if (!editingReview) return;
-
-    if (!editRating) {
-      setReviewError("Please select a rating.");
-      return;
-    }
-
-    if (!editComment.trim()) {
-      setReviewError("Please write a review comment.");
-      return;
-    }
-
-    if (editComment.trim().length < 3) {
-      setReviewError("Your review must contain at least 3 characters.");
-      return;
-    }
-
-    if (editComment.trim().length > 1000) {
-      setReviewError("Your review cannot exceed 1000 characters.");
-      return;
-    }
+  const confirmDeleteReview = async () => {
+    if (!deleteReviewId) return;
 
     try {
-      setUpdatingReview(true);
+      setDeletingReviewId(deleteReviewId);
       setReviewError("");
       setReviewSuccess("");
 
-      const response = await api.put(`/reviews/${editingReview._id}`, {
-        rating: editRating,
-        comment: editComment.trim(),
-      });
+      const response = await api.delete(
+        `/reviews/${deleteReviewId}`
+      );
 
       const data = response.data;
 
       if (data?.success === false) {
         throw new Error(
-          data?.message || "Unable to update your review."
+          data?.message ||
+            "Unable to delete the review."
         );
       }
 
-      const updatedReview =
-        data?.review ||
-        (data?._id ? data : null);
-
-      if (updatedReview) {
-        setReviews((previousReviews) =>
-          previousReviews.map((review) =>
-            String(review._id) === String(updatedReview._id)
-              ? updatedReview
-              : review
-          )
-        );
-      }
-
-      setEditingReview(null);
-      setEditRating(0);
-      setEditComment("");
-      setReviewSuccess(
-        data?.message || "Your review was updated successfully."
+      setReviews((previousReviews) =>
+        previousReviews.filter(
+          (review) =>
+            String(review._id) !==
+            String(deleteReviewId)
+        )
       );
 
-      const movieResponse = await api.get(`/movies/${id}`);
-      const refreshedData = movieResponse.data;
+      setReviewSuccess(
+        data?.message ||
+          "Your review has been deleted."
+      );
+
+      setDeleteReviewId(null);
+
+      const movieResponse = await api.get(
+        `/movies/${id}`
+      );
+
+      const refreshedData =
+        movieResponse.data;
 
       if (refreshedData?.movie) {
         setMovie(refreshedData.movie);
@@ -574,118 +541,8 @@ function Moviedetails() {
           refreshedData.averageRating
         );
 
-        if (Number.isFinite(refreshedRating)) {
-          setAverageRating(refreshedRating);
-        } else {
-          setAverageRating(
-            Number(refreshedData.movie.initialRating) || 0
-          );
-        }
-      }
-    } catch (err) {
-      console.error("Failed to update review:", err);
-
-      setReviewError(
-        err.response?.data?.message ||
-          err.message ||
-          "Unable to update your review."
-      );
-    } finally {
-      setUpdatingReview(false);
-    }
-  };
-
-  /*
-   * =========================================================
-   * DELETE REVIEW
-   * =========================================================
-   */
-
-  const handleDeleteReview = async (
-    reviewId
-  ) => {
-    const confirmed =
-      window.confirm(
-        "Are you sure you want to delete this review?"
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setDeletingReviewId(
-        reviewId
-      );
-
-      setReviewError("");
-      setReviewSuccess("");
-
-      const response =
-        await api.delete(
-          `/reviews/${reviewId}`
-        );
-
-      const data = response.data;
-
-      if (data?.success === false) {
-        throw new Error(
-          data?.message ||
-            "Unable to delete the review."
-        );
-      }
-
-      /*
-       * Remove review immediately.
-       */
-      setReviews(
-        (previousReviews) =>
-          previousReviews.filter(
-            (review) =>
-              String(review._id) !==
-              String(reviewId)
-          )
-      );
-
-      setReviewSuccess(
-        data?.message ||
-          "Your review has been deleted."
-      );
-
-      /*
-       * Refresh movie information so
-       * average rating is recalculated.
-       */
-      const movieResponse =
-        await api.get(
-          `/movies/${id}`
-        );
-
-      const refreshedData =
-        movieResponse.data;
-
-      if (refreshedData?.movie) {
-        setMovie(
-          refreshedData.movie
-        );
-
-        setReviews(
-          Array.isArray(
-            refreshedData.reviews
-          )
-            ? refreshedData.reviews
-            : []
-        );
-
-        const refreshedRating =
-          Number(
-            refreshedData.averageRating
-          );
-
         if (
-          Number.isFinite(
-            refreshedRating
-          )
+          Number.isFinite(refreshedRating)
         ) {
           setAverageRating(
             refreshedRating
@@ -693,8 +550,7 @@ function Moviedetails() {
         } else {
           setAverageRating(
             Number(
-              refreshedData.movie
-                .initialRating
+              refreshedData.movie.initialRating
             ) || 0
           );
         }
@@ -918,21 +774,17 @@ function Moviedetails() {
 
               <p>
                 {hasUserReviewed
-                  ? "You can edit or delete your review from the community section."
+                  ? "You can delete your review from the community section."
                   : "Be the first to share your rating and review with the community."}
               </p>
             </div>
           </div>
 
           {hasUserReviewed ? (
-            <button
-              type="button"
-              className="top-write-review-button already-reviewed-button"
-              onClick={() => handleOpenEditReview(userReview)}
-            >
+            <div className="top-write-review-button already-reviewed-button">
               <span className="write-review-icon">✓</span>
               Already Reviewed
-            </button>
+            </div>
           ) : (
             <button
               type="button"
@@ -1346,30 +1198,12 @@ function Moviedetails() {
                           <div className="review-owner-actions">
                             <button
                               type="button"
-                              className="edit-review-button"
-                              onClick={() =>
-                                handleOpenEditReview(review)
-                              }
-                              disabled={
-                                deletingReviewId === review._id
-                              }
-                            >
-                              Edit Review
-                            </button>
-
-                            <button
-                              type="button"
                               className="delete-review-button"
                               onClick={() =>
                                 handleDeleteReview(review._id)
                               }
-                              disabled={
-                                deletingReviewId === review._id
-                              }
                             >
-                              {deletingReviewId === review._id
-                                ? "Deleting..."
-                                : "Delete Review"}
+                              Delete Review
                             </button>
                           </div>
                         )}
@@ -1388,143 +1222,64 @@ function Moviedetails() {
         </div>
 
         {/* =================================================
-            EDIT REVIEW MODAL
+            DELETE REVIEW CONFIRMATION MODAL
         ================================================= */}
-        {editingReview && (
+        {deleteReviewId && (
           <div
-            className="edit-review-modal-overlay"
+            className="delete-review-modal-overlay"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="edit-review-modal-title"
+            aria-labelledby="delete-review-title"
             onMouseDown={(event) => {
               if (
                 event.target === event.currentTarget &&
-                !updatingReview
+                !deletingReviewId
               ) {
-                handleCloseEditReview();
+                closeDeleteReview();
               }
             }}
           >
-            <div className="edit-review-modal-card">
-              <div className="edit-review-modal-header">
-                <div>
-                  <span className="section-eyebrow">
-                    YOUR REVIEW
-                  </span>
+            <div className="delete-review-modal">
+              <div className="delete-review-modal-icon">
+                !
+              </div>
 
-                  <h2 id="edit-review-modal-title">
-                    Edit Review
-                  </h2>
+              <h3 id="delete-review-title">
+                Delete Review
+              </h3>
 
-                  <p>
-                    Update your rating and review for {movie.title}.
-                  </p>
-                </div>
+              <p>
+                Are you sure you want to delete this review?
+              </p>
+
+              <p className="delete-review-modal-warning">
+                This action cannot be undone.
+              </p>
+
+              <div className="delete-review-modal-actions">
+                <button
+                  type="button"
+                  className="delete-review-cancel-btn"
+                  onClick={closeDeleteReview}
+                  disabled={Boolean(deletingReviewId)}
+                >
+                  Cancel
+                </button>
 
                 <button
                   type="button"
-                  className="edit-review-modal-close"
-                  onClick={handleCloseEditReview}
-                  disabled={updatingReview}
-                  aria-label="Close edit review"
+                  className="delete-review-confirm-btn"
+                  onClick={confirmDeleteReview}
+                  disabled={Boolean(deletingReviewId)}
                 >
-                  ×
+                  {deletingReviewId
+                    ? "Deleting..."
+                    : "Delete Review"}
                 </button>
               </div>
-
-              {reviewError && (
-                <div className="review-message review-message-error">
-                  {reviewError}
-                </div>
-              )}
-
-              <form onSubmit={handleUpdateReview}>
-                <div className="review-rating-field">
-                  <label>Your Rating</label>
-
-                  <div className="review-rating-input-row">
-                    <div
-                      className="star-rating star-rating-interactive"
-                      aria-label={`${editRating} out of 5 stars`}
-                    >
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          className={`star-button ${
-                            star <= editRating
-                              ? "star-filled"
-                              : "star-empty"
-                          }`}
-                          onClick={() => {
-                            setEditRating(star);
-                            setReviewError("");
-                          }}
-                          disabled={updatingReview}
-                          aria-label={`${star} star${
-                            star > 1 ? "s" : ""
-                          }`}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-
-                    <span className="selected-rating">
-                      {editRating
-                        ? `${editRating}/5`
-                        : "Select a rating"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="review-comment-field">
-                  <label htmlFor="edit-review-comment">
-                    Your Review
-                  </label>
-
-                  <textarea
-                    id="edit-review-comment"
-                    value={editComment}
-                    onChange={(event) => {
-                      setEditComment(event.target.value);
-                      setReviewError("");
-                    }}
-                    rows="6"
-                    maxLength="1000"
-                    disabled={updatingReview}
-                  />
-
-                  <div className="review-character-count">
-                    {editComment.length}/1000
-                  </div>
-                </div>
-
-                <div className="edit-review-modal-actions">
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={handleCloseEditReview}
-                    disabled={updatingReview}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    className="primary-button"
-                    disabled={updatingReview}
-                  >
-                    {updatingReview
-                      ? "Saving..."
-                      : "Save Changes"}
-                  </button>
-                </div>
-              </form>
             </div>
           </div>
         )}
-
       </div>
     </section>
   );
