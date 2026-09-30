@@ -1,33 +1,29 @@
-Movie Review Platform
+# Movie Hub – Movie Review Platform
 
-A full-stack MERN movie review platform where users can discover movies, view movie details, submit ratings and reviews, and manage their profile.
+A full-stack **MERN Movie Review Platform** where users can discover movies, view movie details, write reviews, rate movies, and manage their personal watchlist.
 
-Features
-User registration & JWT authentication
-Movie search and browsing
-Movie ratings & reviews
-Delete reviews
-Admin dashboard for movie/review management
-Role-based admin authorization
-Responsive and professional UI
-Tech Stack
+## Features
 
-Frontend: React.js, Vite, Axios, CSS
-Backend: Node.js, Express.js, REST API, JWT
-Database: MongoDB, Mongoose
-Deployment: Render
+- User Registration & JWT Authentication
+- Browse and search movies
+- Movie details and ratings
+- Create, edit and delete reviews
+- Admin dashboard
+- Admin movie and review management
+- Role-based authorization
+- Responsive UI
 
-Live Demo
+## Tech Stack
 
-Frontend: https://movie-review-frontend-jp75.onrender.com
-Backend: https://movie-review-backend-c81i.onrender.com
+**Frontend:** React.js, Vite, Axios, CSS  
+**Backend:** Node.js, Express.js, REST API, JWT  
+**Database:** MongoDB, Mongoose    
+**Deployment:** Render
 
-Run Server :
-cd server
-npm install
-npm start
+## Project Structure
 
-Run Client:
-cd client
-npm install
-npm run dev
+```text
+Movie_Review/
+├── client/       # React frontend
+├── server/       # Node.js + Express backend
+└── README.md
