@@ -1,4 +1,4 @@
-# Movie Hub – Movie Review Platform
+# Movie Review Platform
 
 A full-stack **MERN Movie Review Platform** where users can discover movies, view movie details, write reviews, rate movies, and manage their personal watchlist.
 
