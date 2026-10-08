@@ -2398,18 +2398,26 @@ main {
   background: var(--primary);
 }
 
+/* =========================================================
+   ADMIN - RECENT USERS
+========================================================= */
+
 .admin-recent-list {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .admin-recent-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
 
-  padding: 12px 0;
+  width: 100%;
+  min-height: 72px;
+
+  gap: 20px;
+  padding: 14px 0;
 
   border-bottom: 1px solid var(--border);
 }
@@ -2418,29 +2426,165 @@ main {
   border-bottom: 0;
 }
 
-.admin-recent-item > div {
+/* User section */
+.admin-user-summary {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-user-avatar {
+  width: 44px;
+  height: 44px;
+
+  flex: 0 0 44px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+}
+
+/* User name + email */
+.admin-user-summary div:last-child {
   min-width: 0;
 
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  justify-content: center;
+
+  gap: 4px;
+}
+
+.admin-user-summary strong {
+  color: var(--text-dark);
+
+  font-size: 15px;
+  font-weight: 700;
+
+  line-height: 1.3;
+}
+
+.admin-user-summary small {
+  display: block;
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+  line-height: 1.3;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Date on the right */
+.admin-recent-item > small {
+  flex: 0 0 auto;
+
+  min-width: 125px;
+
+  color: var(--text-dark);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Avatar fallback */
+.admin-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ededee;
+  color: var(--text-dark);
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ADMIN - RECENT REVIEWS
+========================================================= */
+
+.admin-recent-item > div:not(.admin-user-summary) {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
 }
 
 .admin-recent-item strong {
   color: var(--text-dark);
 
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .admin-recent-item span {
-  overflow: hidden;
-
   color: var(--text-muted);
 
-  font-size: 10px;
+  font-size: 13px;
 
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.admin-review-rating {
+  flex: 0 0 auto;
+
+  color: #b7791f !important;
+
+  font-size: 14px !important;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ADMIN - RECENT USERS RESPONSIVE
+========================================================= */
+
+@media (max-width: 640px) {
+  .admin-recent-item {
+    min-height: 66px;
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .admin-user-summary {
+    gap: 11px;
+  }
+
+  .admin-user-avatar {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .admin-user-summary strong,
+  .admin-recent-item strong {
+    font-size: 14px;
+  }
+
+  .admin-user-summary small,
+  .admin-recent-item span {
+    font-size: 12px;
+  }
+
+  .admin-recent-item > small {
+    min-width: auto;
+    font-size: 12px;
+  }
 }
 
 .admin-review-rating {
@@ -9264,4 +9408,270 @@ html:has(body.admin-modal-open) {
   .delete-review-confirm-btn {
     width: 100%;
   }
+}
+
+
+
+/* =========================================================
+   ADMIN DASHBOARD — MEDIUM TYPOGRAPHY
+========================================================= */
+
+/* Main admin text */
+.admin-page {
+  font-size: 14px;
+}
+
+/* Header */
+.admin-header h1 {
+  font-size: 35px;
+}
+
+.admin-header p {
+  font-size: 14px;
+}
+
+/* Tabs */
+.admin-tabs button {
+  font-size: 14px;
+}
+
+/* Statistics */
+.admin-stat-label {
+  font-size: 13px;
+}
+
+.admin-stat-card strong {
+  font-size: 28px;
+}
+
+/* Panel headings */
+.admin-panel-header h2 {
+  font-size: 20px;
+}
+
+/* Highlight sections */
+.admin-highlight span {
+  font-size: 13px;
+}
+
+.admin-highlight strong {
+  font-size: 14px;
+}
+
+/* Rating distribution */
+.rating-row {
+  font-size: 13px;
+}
+
+.rating-row strong {
+  font-size: 13px;
+}
+
+/* Recent Users */
+.admin-recent-item strong {
+  font-size: 15px;
+}
+
+.admin-recent-item span {
+  font-size: 13px;
+}
+
+.admin-user-summary small {
+  font-size: 13px;
+}
+
+.admin-recent-item > small {
+  font-size: 14px;
+}
+
+/* Admin user information */
+.admin-user-cell strong {
+  font-size: 14px;
+}
+
+.admin-user-cell span {
+  font-size: 13px;
+}
+
+/* Tables */
+.admin-table th {
+  font-size: 12px;
+}
+
+.admin-table td {
+  font-size: 13px;
+}
+
+/* Search / filters */
+.admin-search-input,
+.admin-form-field input,
+.admin-form-field textarea,
+.admin-form-field select {
+  font-size: 14px;
+}
+
+/* Form labels */
+.admin-form-field label {
+  font-size: 13px;
+}
+
+/* Buttons */
+.admin-page button {
+  font-size: 13px;
+}
+
+/* Badges */
+.admin-count-badge {
+  font-size: 12px;
+}
+
+/* Empty / loading states */
+.admin-no-data {
+  font-size: 14px;
+}
+
+.admin-no-data-large p {
+  font-size: 14px;
+}
+
+.admin-tab-loading {
+  font-size: 14px;
+}
+
+/* Error message */
+.admin-error {
+  font-size: 13px;
+}
+
+/* =========================================================
+   FINAL MOVIE CARD HOVER EFFECT
+========================================================= */
+
+.movies-page .movie-card {
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.movies-page .movie-card:hover {
+  transform: translateY(-5px);
+
+  border-color: rgba(229, 9, 20, 0.35);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.12),
+    0 5px 12px rgba(229, 9, 20, 0.08);
+}
+
+
+/* =========================================================
+   POSTER
+========================================================= */
+
+.movies-page .movie-poster-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* IMPORTANT:
+   Remove the old transform:none !important rules.
+*/
+
+.movies-page .movie-poster {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  transform: scale(1.12);
+  transform-origin: center center;
+
+  transition:
+    transform 0.35s ease,
+    filter 0.35s ease !important;
+}
+
+
+/* Hover zoom */
+
+.movies-page .movie-card:hover .movie-poster {
+  transform: scale(1.18) !important;
+  filter: brightness(0.88);
+}
+
+
+/* =========================================================
+   POSTER OVERLAY
+========================================================= */
+
+.movies-page .movie-poster-overlay {
+  opacity: 0;
+
+  transform: translateY(10px);
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.movies-page .movie-card:hover .movie-poster-overlay {
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+========================================================= */
+
+.movies-page .movie-poster-overlay span {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.movies-page .movie-card:hover
+.movie-poster-overlay span {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.movies-page .movie-title a {
+  transition: color 0.2s ease;
+}
+
+.movies-page .movie-card:hover
+.movie-title a {
+  color: var(--primary);
+}
+/* FINAL OVERRIDE — MOVIE POSTER HOVER */
+
+.movies-page .movies-grid .movie-poster {
+  transform: scale(1.12) !important;
+  transform-origin: center center !important;
+
+  transition:
+    transform 0.35s ease,
+    filter 0.35s ease !important;
+}
+
+.movies-page .movies-grid .movie-card:hover .movie-poster {
+  transform: scale(1.18) !important;
+  filter: brightness(0.88) !important;
 }

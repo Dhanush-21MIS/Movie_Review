@@ -12,12 +12,37 @@ function Movies() {
   useEffect(() => {
     let mounted = true;
 
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
     const fetchMovies = async () => {
+      if (!mounted) return;
+
       try {
         setLoading(true);
         setError("");
 
-        const response = await api.get("/movies");
+        let response;
+
+        try {
+          // First request
+          response = await api.get("/movies");
+        } catch (firstError) {
+          if (!mounted) return;
+
+          console.warn(
+            "First movie request failed. Retrying in 2 seconds...",
+            firstError
+          );
+
+          // Give Render/backend a little time to respond
+          await sleep(2000);
+
+          if (!mounted) return;
+
+          // Automatic retry
+          response = await api.get("/movies");
+        }
 
         if (!mounted) return;
 
@@ -42,16 +67,23 @@ function Movies() {
         }
 
         setMovies(movieData);
+        setError("");
       } catch (err) {
         if (!mounted) return;
 
         console.error("Failed to fetch movies:", err);
 
-        setError(
-          err.response?.data?.message ||
-            err.message ||
-            "Unable to load movies. Please try again."
-        );
+        if (err.code === "ECONNABORTED") {
+          setError(
+            "The server is taking longer than expected. Please try again."
+          );
+        } else {
+          setError(
+            err.response?.data?.message ||
+              err.message ||
+              "Unable to load movies. Please try again."
+          );
+        }
       } finally {
         if (mounted) {
           setLoading(false);
@@ -220,14 +252,41 @@ function Movies() {
       return [];
     }
 
-    return movie.genre
-      .filter(Boolean)
-      .slice(0, 3);
+    return movie.genre.filter(Boolean).slice(0, 3);
   };
 
-  // Retry
-  const handleRetry = () => {
-    window.location.reload();
+  // Retry without reloading the entire page
+  const handleRetry = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await api.get("/movies");
+
+      const movieData = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.movies)
+        ? response.data.movies
+        : null;
+
+      if (!movieData) {
+        throw new Error("Invalid movies response from server.");
+      }
+
+      setMovies(movieData);
+    } catch (err) {
+      console.error("Retry failed:", err);
+
+      setError(
+        err.code === "ECONNABORTED"
+          ? "The server is taking longer than expected. Please try again."
+          : err.response?.data?.message ||
+              err.message ||
+              "Unable to load movies. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -439,15 +498,20 @@ function Movies() {
                         {movie.poster ? (
                           <>
                             <img
-                            src={movie.poster}
-                            alt={`${movie.title} poster`}
-                            className="movie-poster"
-                            loading="lazy"
-                            onError={(event) => {
-                              event.currentTarget.style.display = "none";
-                              event.currentTarget.nextElementSibling?.removeAttribute("hidden");
-                            }}
-                          />
+                              src={movie.poster}
+                              alt={`${movie.title} poster`}
+                              className="movie-poster"
+                              loading="lazy"
+                              onError={(event) => {
+                                event.currentTarget.style.display =
+                                  "none";
+
+                                event.currentTarget.nextElementSibling?.removeAttribute(
+                                  "hidden"
+                                );
+                              }}
+                            />
+
                             <div
                               className="movie-poster-fallback"
                               hidden
