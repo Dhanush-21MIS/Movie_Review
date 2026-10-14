@@ -9675,3 +9675,107 @@ html:has(body.admin-modal-open) {
   transform: scale(1.18) !important;
   filter: brightness(0.88) !important;
 }
+/* =========================================================
+   ADMIN DASHBOARD — SLIGHTLY LARGER MOVIES & REVIEWS TYPOGRAPHY
+   Appended override: keeps the existing layout and behavior.
+========================================================= */
+.admin-search-box input {
+  font-size: 14px !important;
+}
+
+.admin-search-box input::placeholder {
+  font-size: 13px !important;
+}
+
+.admin-search-count {
+  font-size: 12px !important;
+}
+
+.admin-sort-select {
+  font-size: 13px !important;
+}
+
+.admin-panel-header h2 {
+  font-size: 21px !important;
+}
+
+.admin-table th {
+  font-size: 12px !important;
+}
+
+.admin-table td {
+  font-size: 13px !important;
+}
+
+.admin-table td strong,
+.admin-movie-cell strong,
+.admin-review-cell strong,
+.admin-user-cell strong {
+  font-size: 14px !important;
+}
+
+/* Reviews section: make reviewer, movie, comment, rating and date easier to read. */
+.admin-review-author,
+.admin-review-user,
+.admin-review-movie,
+.admin-review-comment,
+.admin-review-date,
+.admin-review-rating,
+.admin-review-cell,
+.admin-review-content {
+  font-size: 13px !important;
+}
+
+.admin-review-cell strong,
+.admin-review-author strong,
+.admin-review-user strong {
+  font-size: 14px !important;
+}
+
+.admin-review-cell small,
+.admin-review-author small,
+.admin-review-user small,
+.admin-review-date {
+  font-size: 12px !important;
+}
+
+.admin-table button,
+.admin-panel button,
+.admin-tabs button,
+.admin-search-clear {
+  font-size: 13px;
+}
+
+@media (max-width: 560px) {
+  .admin-search-box input {
+    font-size: 14px !important;
+  }
+
+  .admin-sort-select {
+    font-size: 13px !important;
+  }
+
+  .admin-table th {
+    font-size: 12px !important;
+  }
+
+  .admin-table td {
+    font-size: 13px !important;
+  }
+}
+
+
+/* Navbar-only glass effect */
+/* Keeps existing navbar alignment and dimensions unchanged */
+
+.navbar {
+  background: rgba(255, 255, 255, 0.80);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 5px 22px rgba(20, 20, 30, 0.045);
+
+  transition: background-color 0.25s ease,
+              box-shadow 0.25s ease;
+}

@@ -525,6 +525,25 @@ function AdminDashboard() {
       );
   });
 
+  // Use the user's average rating when it is a valid positive value.
+  // If it is missing, invalid, or zero, fall back to the movie's initial rating.
+  const getMovieRating = (movie) => {
+    const averageRating = Number(movie?.averageRating);
+    const initialRating = Number(movie?.initialRating);
+
+    if (movie?.averageRating !== null && movie?.averageRating !== undefined &&
+        Number.isFinite(averageRating) && averageRating > 0) {
+      return averageRating;
+    }
+
+    if (movie?.initialRating !== null && movie?.initialRating !== undefined &&
+        Number.isFinite(initialRating) && initialRating > 0) {
+      return initialRating;
+    }
+
+    return 0;
+  };
+
   const sortedMovies = [...filteredMovies].sort((a, b) => {
     switch (movieSort) {
       case "title-asc":
@@ -598,9 +617,6 @@ function AdminDashboard() {
     return stats[key] ?? 0;
   };
 
-  const getMovieRating = (movie) => {
-    return Number(movie.averageRating ?? movie.initialRating ?? 0);
-  };
 
   if (loading) {
     return (
