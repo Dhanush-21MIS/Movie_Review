@@ -9779,3 +9779,731 @@ html:has(body.admin-modal-open) {
   transition: background-color 0.25s ease,
               box-shadow 0.25s ease;
 }
+
+/* =========================================================
+   MOVIE HUB THEME SWITCH — LIGHT / DARK
+   Theme is toggled by Navbar and stored in localStorage.
+   Layout dimensions and alignment are intentionally unchanged.
+========================================================= */
+
+:root {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --text-dark: #f4f4f5;
+  --text: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --background: #101114;
+  --surface: #191a20;
+  --border: #30313a;
+  --border-dark: #444550;
+  --primary-light: rgba(229, 9, 20, 0.16);
+  --success-bg: #142a20;
+  --danger-bg: #32191b;
+  --warning-bg: #302719;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.38);
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] main {
+  background: var(--background);
+  color: var(--text);
+}
+
+/* Navbar glass surface retains its existing height and alignment. */
+html[data-theme="dark"] .navbar {
+  background: rgba(20, 21, 26, 0.82);
+  border-bottom-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 5px 22px rgba(0, 0, 0, 0.20);
+}
+
+html[data-theme="dark"] .navbar-brand,
+html[data-theme="dark"] .nav-links a,
+html[data-theme="dark"] .account-dropdown-trigger {
+  color: var(--text-muted);
+}
+
+html[data-theme="dark"] .navbar-brand {
+  color: var(--text-dark);
+}
+
+html[data-theme="dark"] .nav-links a:hover,
+html[data-theme="dark"] .account-dropdown-trigger:hover,
+html[data-theme="dark"] .account-dropdown-trigger.account-dropdown-open {
+  background: rgba(229, 9, 20, 0.15);
+  color: #ff626a;
+}
+
+html[data-theme="dark"] .nav-links a.nav-active,
+html[data-theme="dark"] .nav-links a[href="/admin"].nav-active {
+  color: #ff626a;
+  background: transparent;
+}
+
+.nav-theme-toggle {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-theme-toggle:hover {
+  border-color: rgba(229, 9, 20, 0.45);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.nav-theme-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.nav-theme-toggle:focus-visible {
+  outline: 2px solid rgba(229, 9, 20, 0.45);
+  outline-offset: 2px;
+}
+
+html[data-theme="dark"] .nav-theme-toggle {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f4f4f5;
+}
+
+html[data-theme="dark"] .nav-theme-toggle:hover {
+  background: rgba(229, 9, 20, 0.18);
+  border-color: rgba(255, 99, 106, 0.5);
+  color: #ff777d;
+}
+
+/* Main surfaces */
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .movie-card,
+html[data-theme="dark"] .movies-loading,
+html[data-theme="dark"] .movies-error,
+html[data-theme="dark"] .movies-empty,
+html[data-theme="dark"] .movie-details-main,
+html[data-theme="dark"] .movie-opinion-compact,
+html[data-theme="dark"] .review-form-card,
+html[data-theme="dark"] .login-review-card,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .no-reviews,
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .account-review-card,
+html[data-theme="dark"] .account-empty,
+html[data-theme="dark"] .account-loading,
+html[data-theme="dark"] .account-error,
+html[data-theme="dark"] .movie-reviews-card,
+html[data-theme="dark"] .top-write-review-bar,
+html[data-theme="dark"] .admin-stat-card,
+html[data-theme="dark"] .admin-panel,
+html[data-theme="dark"] .admin-modal,
+html[data-theme="dark"] .photo-modal,
+html[data-theme="dark"] .admin-confirm-modal,
+html[data-theme="dark"] .admin-role-confirm-dialog,
+html[data-theme="dark"] .review-modal-card,
+html[data-theme="dark"] .delete-review-modal,
+html[data-theme="dark"] .account-dropdown-menu {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Form controls */
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .review-modal-card .review-comment-field textarea,
+html[data-theme="dark"] .admin-search-box input,
+html[data-theme="dark"] .admin-sort-select,
+html[data-theme="dark"] .admin-form-field input,
+html[data-theme="dark"] .admin-form-field textarea,
+html[data-theme="dark"] .admin-form-field select,
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .movie-search-wrapper input,
+html[data-theme="dark"] .movie-sort-wrapper select {
+  background-color: #202127;
+  color: #f4f4f5;
+  border-color: #444550;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #92939e;
+}
+
+html[data-theme="dark"] .secondary-button,
+html[data-theme="dark"] .edit-review-btn,
+html[data-theme="dark"] .delete-review-cancel-btn,
+html[data-theme="dark"] .table-action-button {
+  background: #24252c;
+  color: #e4e4e7;
+  border-color: #444550;
+}
+
+html[data-theme="dark"] .movie-genre,
+html[data-theme="dark"] .meta-divider,
+html[data-theme="dark"] .admin-tabs button,
+html[data-theme="dark"] .admin-table th {
+  background-color: #25262d;
+  color: #d4d4d8;
+}
+
+html[data-theme="dark"] .admin-table,
+html[data-theme="dark"] .admin-table td,
+html[data-theme="dark"] .admin-table th,
+html[data-theme="dark"] .movie-details-info-grid,
+html[data-theme="dark"] .review-modal-header,
+html[data-theme="dark"] .account-review-card,
+html[data-theme="dark"] .admin-panel-header {
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .admin-table td,
+html[data-theme="dark"] .admin-table tr,
+html[data-theme="dark"] .admin-table tbody tr {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .admin-tabs button.active {
+  background: var(--primary-light);
+  color: #ff777d;
+}
+
+html[data-theme="dark"] .account-dropdown-item {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .account-dropdown-item:hover,
+html[data-theme="dark"] .account-dropdown-item.dropdown-item-active {
+  background: rgba(229, 9, 20, 0.16);
+  color: #ff777d;
+}
+
+html[data-theme="dark"] .account-dropdown-item.dropdown-logout {
+  border-top-color: var(--border);
+}
+
+html[data-theme="dark"] .delete-review-modal h3,
+html[data-theme="dark"] .delete-review-cancel-btn:hover {
+  color: #f4f4f5;
+}
+
+html[data-theme="dark"] .delete-review-modal p {
+  color: #b4b4bd;
+}
+
+/* Some sections use literal light backgrounds in the original stylesheet. */
+html[data-theme="dark"] .account-review-card,
+html[data-theme="dark"] .movie-opinion-compact,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .review-form-card,
+html[data-theme="dark"] .login-review-card,
+html[data-theme="dark"] .admin-highlight,
+html[data-theme="dark"] .admin-recent-item,
+html[data-theme="dark"] .admin-user-summary,
+html[data-theme="dark"] .admin-review-card,
+html[data-theme="dark"] .admin-search-box,
+html[data-theme="dark"] .admin-table-wrapper {
+  background-color: #191a20;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .movies-page .movie-card:hover {
+  border-color: rgba(255, 99, 106, 0.42);
+}
+
+html[data-theme="dark"] .movie-poster-placeholder,
+html[data-theme="dark"] .movie-details-poster-placeholder {
+  background: #25262d;
+}
+
+html[data-theme="dark"] .form-group input:disabled {
+  background: #292a31;
+}
+
+/* =========================================================
+   MOVIE POSTER CLICK-TO-PREVIEW
+========================================================= */
+
+.movie-details-poster-preview-trigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: transparent;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.movie-details-poster-preview-trigger .movie-details-poster {
+  display: block;
+  transition: filter 0.22s ease;
+}
+
+.movie-details-poster-preview-trigger:hover .movie-details-poster {
+  filter: brightness(0.78);
+}
+
+.movie-poster-preview-hint {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(15, 15, 18, 0.72);
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.movie-details-poster-preview-trigger:hover .movie-poster-preview-hint,
+.movie-details-poster-preview-trigger:focus-visible .movie-poster-preview-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.movie-details-poster-preview-trigger:focus-visible {
+  outline: 3px solid rgba(229, 9, 20, 0.55);
+  outline-offset: 3px;
+}
+
+.movie-poster-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.96);
+  animation: moviePosterPreviewFade 0.18s ease both;
+}
+
+.movie-poster-preview-dialog {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  animation: moviePosterPreviewPop 0.22s ease both;
+}
+
+.movie-poster-preview-image {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.movie-poster-preview-caption {
+  display: none;
+}
+
+.movie-poster-preview-close {
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  z-index: 5001;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  background: rgba(10, 10, 12, 0.78);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.movie-poster-preview-close:hover {
+  background: var(--primary);
+}
+
+@keyframes moviePosterPreviewFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes moviePosterPreviewPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 700px) {
+  .nav-theme-toggle {
+    min-height: 32px;
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+
+  .nav-theme-icon {
+    font-size: 15px;
+  }
+
+  .movie-poster-preview-overlay {
+    padding: 0;
+  }
+
+  .movie-poster-preview-dialog {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+  }
+
+  .movie-poster-preview-image {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  .movie-poster-preview-close {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-theme-toggle,
+  .movie-details-poster-preview-trigger .movie-details-poster,
+  .movie-poster-preview-hint,
+  .movie-poster-preview-overlay,
+  .movie-poster-preview-dialog {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* FINAL OVERRIDES: fullscreen poster preview, no preview text */
+.movie-details-poster-preview-trigger {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  cursor: zoom-in !important;
+}
+
+.movie-poster-preview-hint,
+.movie-poster-preview-caption {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.movie-poster-preview-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+.movie-poster-preview-image {
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100vw !important;
+  max-height: 100dvh !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.movie-poster-preview-close {
+  position: fixed !important;
+  top: 18px !important;
+  right: 20px !important;
+  z-index: 2147483647 !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  border-radius: 50% !important;
+  background: rgba(20, 20, 20, 0.85) !important;
+  color: #fff !important;
+  font-size: 32px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.movie-poster-preview-close:hover {
+  background: #e50914 !important;
+}
+
+@media (max-width: 600px) {
+  .movie-poster-preview-close {
+    top: 12px !important;
+    right: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+/* =========================================================
+   MOVIE REVIEW — CONSISTENT DARK THEME
+   Activated by: <html data-theme="dark">
+   Append this section to the end of your existing index.css.
+   ========================================================= */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --primary: #ff3545;
+  --primary-dark: #d91f2d;
+  --primary-light: #3b171c;
+  --text-dark: #f7f7fb;
+  --text: #e6e7ee;
+  --text-muted: #a1a5b3;
+  --background: #101116;
+  --surface: #191b23;
+  --border: #30333e;
+  --border-dark: #414552;
+  --success: #4ade80;
+  --success-bg: #142d21;
+  --danger: #ff6b6b;
+  --danger-bg: #351b20;
+  --warning: #fbbf24;
+  --warning-bg: #332914;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.22);
+  --shadow-md: 0 8px 28px rgba(0,0,0,.30);
+  --shadow-lg: 0 18px 50px rgba(0,0,0,.42);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #root {
+  background: var(--background) !important;
+  color: var(--text) !important;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] main,
+html[data-theme="dark"] section,
+html[data-theme="dark"] article,
+html[data-theme="dark"] .app,
+html[data-theme="dark"] .page,
+html[data-theme="dark"] .page-container,
+html[data-theme="dark"] .container,
+html[data-theme="dark"] .movie-details-container,
+html[data-theme="dark"] .movies-container,
+html[data-theme="dark"] .browse-container,
+html[data-theme="dark"] .account-container,
+html[data-theme="dark"] .admin-page,
+html[data-theme="dark"] .admin-container {
+  color: var(--text);
+}
+
+/* Text */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] label,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] b,
+html[data-theme="dark"] p,
+html[data-theme="dark"] li,
+html[data-theme="dark"] td,
+html[data-theme="dark"] th,
+html[data-theme="dark"] .movie-title,
+html[data-theme="dark"] .movie-details-title,
+html[data-theme="dark"] .account-review-movie-title {
+  color: var(--text);
+}
+html[data-theme="dark"] small,
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .movie-meta,
+html[data-theme="dark"] .movie-year,
+html[data-theme="dark"] .account-review-date {
+  color: var(--text-muted);
+}
+html[data-theme="dark"] a { color: #ff858d; }
+html[data-theme="dark"] a:hover { color: #ffb0b6; }
+
+/* Navbar */
+html[data-theme="dark"] .navbar,
+html[data-theme="dark"] nav.navbar {
+  background: rgba(19, 21, 28, .92) !important;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--border) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+html[data-theme="dark"] .navbar a,
+html[data-theme="dark"] .navbar button,
+html[data-theme="dark"] .navbar .nav-link,
+html[data-theme="dark"] .navbar-brand { color: var(--text) !important; }
+
+/* Cards, panels, forms, dropdowns */
+html[data-theme="dark"] .movie-card,
+html[data-theme="dark"] .movie-details-card,
+html[data-theme="dark"] .movie-info-card,
+html[data-theme="dark"] .review-card,
+html[data-theme="dark"] .account-review-card,
+html[data-theme="dark"] .account-profile-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .admin-panel,
+html[data-theme="dark"] .admin-stat-card,
+html[data-theme="dark"] .admin-modal,
+html[data-theme="dark"] .admin-confirm-modal,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .profile-dropdown,
+html[data-theme="dark"] .search-panel,
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .pagination,
+html[data-theme="dark"] .modal-content {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  box-shadow: var(--shadow-sm);
+}
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .admin-search-input,
+html[data-theme="dark"] .admin-sort-select {
+  background: #12141b !important;
+  color: var(--text) !important;
+  border-color: var(--border-dark) !important;
+  caret-color: var(--primary);
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #858a99 !important;
+  opacity: 1;
+}
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(255,53,69,.16) !important;
+}
+html[data-theme="dark"] option { background: #191b23; color: var(--text); }
+
+/* Buttons */
+html[data-theme="dark"] button:not(.movie-poster-preview-close),
+html[data-theme="dark"] .secondary-button,
+html[data-theme="dark"] .cancel-button {
+  border-color: var(--border-dark);
+}
+html[data-theme="dark"] .secondary-button,
+html[data-theme="dark"] .cancel-button,
+html[data-theme="dark"] .back-to-movies,
+html[data-theme="dark"] .pagination button,
+html[data-theme="dark"] .admin-tabs button {
+  background: #222530;
+  color: var(--text);
+}
+html[data-theme="dark"] button:disabled { opacity: .5; }
+
+/* Tables and separators */
+html[data-theme="dark"] table { color: var(--text); border-color: var(--border); }
+html[data-theme="dark"] th { background: #222530 !important; color: #f5f6fa !important; }
+html[data-theme="dark"] td { border-color: var(--border) !important; }
+html[data-theme="dark"] tr:nth-child(even) { background: rgba(255,255,255,.025); }
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .divider { border-color: var(--border) !important; }
+
+/* Admin dashboard elements */
+html[data-theme="dark"] .admin-header,
+html[data-theme="dark"] .admin-panel-header,
+html[data-theme="dark"] .admin-table-wrapper,
+html[data-theme="dark"] .admin-search-row,
+html[data-theme="dark"] .admin-tabs,
+html[data-theme="dark"] .admin-recent-item,
+html[data-theme="dark"] .admin-review-card,
+html[data-theme="dark"] .admin-user-cell,
+html[data-theme="dark"] .admin-movie-cell {
+  background: #191b23 !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+html[data-theme="dark"] .admin-table th { background: #242732 !important; }
+html[data-theme="dark"] .admin-table td { background: transparent !important; }
+
+/* Scrollbar */
+html[data-theme="dark"] * { scrollbar-color: #454957 #15171e; }
+html[data-theme="dark"] *::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-theme="dark"] *::-webkit-scrollbar-track { background: #15171e; }
+html[data-theme="dark"] *::-webkit-scrollbar-thumb { background: #454957; border: 2px solid #15171e; border-radius: 10px; }
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover { background: #606677; }
+
+/* Keep poster imagery and fullscreen preview unchanged */
+html[data-theme="dark"] .movie-poster-preview-overlay { background: #000 !important; }
+html[data-theme="dark"] .movie-poster-preview-image { background: #000; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="dark"] *, html[data-theme="dark"] *::before, html[data-theme="dark"] *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}

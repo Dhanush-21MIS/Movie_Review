@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 
@@ -19,6 +20,7 @@ function Moviedetails() {
   const [deletingReviewId, setDeletingReviewId] = useState(null);
   const [deleteReviewId, setDeleteReviewId] = useState(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showPosterPreview, setShowPosterPreview] = useState(false);
 
   const [error, setError] = useState("");
   const [reviewError, setReviewError] = useState("");
@@ -164,7 +166,7 @@ function Moviedetails() {
    */
   useEffect(() => {
     const dialogOpen =
-      showReviewForm || Boolean(deleteReviewId);
+      showReviewForm || Boolean(deleteReviewId) || showPosterPreview;
 
     if (!dialogOpen) {
       document.body.style.overflow = "";
@@ -177,7 +179,24 @@ function Moviedetails() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [showReviewForm, deleteReviewId]);
+  }, [showReviewForm, deleteReviewId, showPosterPreview]);
+
+  // Close the poster preview with Escape.
+  useEffect(() => {
+    if (!showPosterPreview) return;
+
+    const handlePosterPreviewEscape = (event) => {
+      if (event.key === "Escape") {
+        setShowPosterPreview(false);
+      }
+    };
+
+    document.addEventListener("keydown", handlePosterPreviewEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handlePosterPreviewEscape);
+    };
+  }, [showPosterPreview]);
 
   /*
    * =========================================================
@@ -825,11 +844,18 @@ function Moviedetails() {
               {/* POSTER */}
               <div className="movie-details-poster-section">
                 {movie.poster ? (
-                  <img
-                    src={movie.poster}
-                    alt={`${movie.title} poster`}
-                    className="movie-details-poster"
-                  />
+                  <button
+                    type="button"
+                    className="movie-details-poster-preview-trigger"
+                    onClick={() => setShowPosterPreview(true)}
+                    aria-label={`Preview ${movie.title} poster`}
+                  >
+                    <img
+                      src={movie.poster}
+                      alt={`${movie.title} poster`}
+                      className="movie-details-poster"
+                    />
+                  </button>
                 ) : (
                   <div className="movie-details-poster-placeholder">
                     <span>Movie Hub</span>
@@ -1279,6 +1305,36 @@ function Moviedetails() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* MOVIE POSTER FULL-SIZE PREVIEW */}
+        {showPosterPreview && movie.poster && createPortal(
+          <div
+            className="movie-poster-preview-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Movie poster fullscreen preview"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowPosterPreview(false);
+              }
+            }}
+          >
+            <button
+              type="button"
+              className="movie-poster-preview-close"
+              aria-label="Close poster preview"
+              onClick={() => setShowPosterPreview(false)}
+            >
+              ×
+            </button>
+            <img
+              src={movie.poster}
+              alt={`${movie.title} poster enlarged`}
+              className="movie-poster-preview-image"
+            />
+          </div>,
+          document.body
         )}
       </div>
     </section>
