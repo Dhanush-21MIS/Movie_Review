@@ -16,37 +16,18 @@ function Navbar() {
 
   const [user, setUser] = useState(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem("movie-hub-theme") === "dark"
-        ? "dark"
-        : "light";
-    } catch {
-      return "light";
-    }
-  });
-
   const accountMenuRef = useRef(null);
 
-  // ======================================================
-  // PERSIST LIGHT / DARK THEME
-  // ======================================================
-
+  // Keep the website in light mode.
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.theme = "light";
 
     try {
-      localStorage.setItem("movie-hub-theme", theme);
-    } catch (error) {
-      console.warn("Unable to save theme preference:", error);
+      localStorage.removeItem("movie-hub-theme");
+    } catch {
+      // Ignore storage restrictions; the page still uses light mode.
     }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((currentTheme) =>
-      currentTheme === "dark" ? "light" : "dark"
-    );
-  };
+  }, []);
 
   // ======================================================
   // LOAD USER
@@ -441,20 +422,6 @@ function Navbar() {
             </>
           )}
 
-          <button
-            type="button"
-            className="nav-theme-toggle"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            <span className="nav-theme-icon" aria-hidden="true">
-              {theme === "dark" ? "☀" : "☾"}
-            </span>
-            <span className="nav-theme-label">
-              {theme === "dark" ? "Light" : "Dark"}
-            </span>
-          </button>
 
         </nav>
 

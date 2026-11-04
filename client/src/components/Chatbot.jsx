@@ -14,7 +14,7 @@ function Chatbot() {
     {
       role: "assistant",
       content:
-        "Hi! I'm MovieHub AI. Ask me about movies, genres, ratings, reviews, or recommendations!",
+        "Hi! I'm AI assistant. Ask me about movies, genres, ratings, reviews, or recommendations!",
     },
   ]);
 
@@ -25,12 +25,15 @@ function Chatbot() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Automatically scroll to the latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
+      block: "end",
     });
   }, [messages, isLoading, error]);
 
+  // Focus the input when the chatbot opens
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
@@ -41,6 +44,7 @@ function Chatbot() {
     }
   }, [isOpen]);
 
+  // Send a message to the AI backend
   const handleSend = async (event) => {
     event.preventDefault();
 
@@ -51,6 +55,7 @@ function Chatbot() {
     setError("");
     setInput("");
 
+    // Keep recent conversation history for context
     const history = messages
       .filter(
         (item) =>
@@ -76,11 +81,9 @@ function Chatbot() {
     try {
       const response = await fetch(`${API_URL}/api/ai/chat`, {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           message,
           history,
@@ -119,13 +122,13 @@ function Chatbot() {
         },
       ]);
     } catch (err) {
-      console.error("MovieHub AI chatbot error:", err);
+      console.error("AI chatbot error:", err);
 
       let errorMessage = err.message;
 
       if (err instanceof TypeError) {
         errorMessage =
-          "Unable to connect to the backend. Make sure your server is running and the API URL is correct.";
+          "Unable to connect to the backend. Please check your internet connection and API URL.";
       }
 
       setError(
@@ -137,16 +140,16 @@ function Chatbot() {
     }
   };
 
+  // Send the message when Enter is pressed
+  // Shift + Enter inserts a new line
   const handleKeyDown = (event) => {
-    if (
-      event.key === "Enter" &&
-      !event.shiftKey
-    ) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSend(event);
     }
   };
 
+  // Clear the conversation
   const handleClearChat = () => {
     if (isLoading) return;
 
@@ -162,6 +165,7 @@ function Chatbot() {
     setInput("");
   };
 
+  // Fill the input with a suggested question
   const handleSuggestion = (suggestion) => {
     setInput(suggestion);
     setError("");
@@ -170,33 +174,36 @@ function Chatbot() {
 
   return (
     <div className="movie-chatbot">
+      {/* Floating chatbot button */}
       {!isOpen && (
         <button
           type="button"
           className="chatbot-toggle"
           onClick={() => setIsOpen(true)}
-          aria-label="Open MovieHub AI chatbot"
-          title="Chat with MovieHub AI"
+          aria-label="Open AI chatbot"
+          title="Chat with AI"
         >
           <span className="chatbot-toggle-icon">✦</span>
 
           <span className="chatbot-toggle-text">
-            Ask MovieHub AI
+            Ask AI
           </span>
         </button>
       )}
 
+      {/* Chat window */}
       {isOpen && (
         <section
           className="chatbot-window"
-          aria-label="MovieHub AI chat"
+          aria-label="AI chat"
         >
+          {/* Header */}
           <header className="chatbot-header">
             <div className="chatbot-header-info">
-              <div className="chatbot-avatar">M</div>
+              <div className="chatbot-avatar">AI</div>
 
               <div>
-                <h3>MovieHub AI</h3>
+                <h3>AI Assistant</h3>
 
                 <p>
                   <span className="chatbot-status-dot"></span>
@@ -206,6 +213,7 @@ function Chatbot() {
             </div>
 
             <div className="chatbot-header-actions">
+              {/* Clear conversation */}
               <button
                 type="button"
                 className="chatbot-header-button"
@@ -217,6 +225,7 @@ function Chatbot() {
                 ↻
               </button>
 
+              {/* Close chatbot */}
               <button
                 type="button"
                 className="chatbot-header-button"
@@ -229,13 +238,14 @@ function Chatbot() {
             </div>
           </header>
 
+          {/* Conversation messages */}
           <div
             className="chatbot-messages"
             aria-live="polite"
             aria-relevant="additions"
           >
             <div className="chatbot-date-label">
-              MOVIEHUB AI ASSISTANT
+              AI ASSISTANT
             </div>
 
             {messages.map((message, index) => (
@@ -247,12 +257,14 @@ function Chatbot() {
                     : "assistant-message-row"
                 }`}
               >
+                {/* AI avatar */}
                 {message.role === "assistant" && (
                   <div className="chatbot-message-avatar">
-                    M
+                    AI
                   </div>
                 )}
 
+                {/* Message bubble */}
                 <div
                   className={`chatbot-message ${
                     message.role === "user"
@@ -284,15 +296,17 @@ function Chatbot() {
               </div>
             ))}
 
+            {/* AI typing indicator */}
             {isLoading && (
               <div className="chatbot-message-row assistant-message-row">
                 <div className="chatbot-message-avatar">
-                  M
+                  AI
                 </div>
 
                 <div
                   className="chatbot-message assistant-message chatbot-typing"
-                  aria-label="MovieHub AI is responding"
+                  aria-label="AI is responding"
+                  role="status"
                 >
                   <span></span>
                   <span></span>
@@ -301,6 +315,7 @@ function Chatbot() {
               </div>
             )}
 
+            {/* Error message */}
             {error && (
               <div className="chatbot-error" role="alert">
                 {error}
@@ -310,6 +325,7 @@ function Chatbot() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Suggested questions */}
           {messages.length === 1 && !isLoading && (
             <div className="chatbot-suggestions">
               <p>Try asking:</p>
@@ -322,9 +338,7 @@ function Chatbot() {
                 <button
                   type="button"
                   key={suggestion}
-                  onClick={() =>
-                    handleSuggestion(suggestion)
-                  }
+                  onClick={() => handleSuggestion(suggestion)}
                 >
                   {suggestion}
                 </button>
@@ -332,6 +346,7 @@ function Chatbot() {
             </div>
           )}
 
+          {/* Message input */}
           <form
             className="chatbot-input-area"
             onSubmit={handleSend}
@@ -347,7 +362,7 @@ function Chatbot() {
               rows={1}
               maxLength={2000}
               disabled={isLoading}
-              aria-label="Message MovieHub AI"
+              aria-label="Message AI"
             />
 
             <button
@@ -361,8 +376,9 @@ function Chatbot() {
             </button>
           </form>
 
+          {/* Footer */}
           <div className="chatbot-footer">
-            Powered by MovieHub AI
+            Powered by AI
           </div>
         </section>
       )}
