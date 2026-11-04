@@ -5,7 +5,7 @@ import {
 
 import { useEffect, useRef, useState } from "react";
 
-const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes
 
 function Navbar() {
   const navigate = useNavigate();
@@ -87,43 +87,84 @@ function Navbar() {
   }, []);
 
   // ======================================================
-  // AUTOMATIC LOGOUT AFTER 15 MINUTES OF INACTIVITY
+  // AUTOMATIC SESSION TIMEOUT AFTER 15 MINUTES OF INACTIVITY
+  // Shared across tabs using localStorage.
   // ======================================================
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) return undefined;
 
-    let inactivityTimer;
+    let inactivityTimer = null;
+    let lastActivityWrite = 0;
+    const activityKey = "movie-hub-last-activity";
 
-    const logoutForInactivity = () => {
-      console.log(
-        "User inactive for 15 minutes. Logging out."
-      );
+    const removeSession = (reason) => {
+      if (inactivityTimer) clearTimeout(inactivityTimer);
 
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem(activityKey);
 
       setIsAuthenticated(false);
       setUser(null);
       setAccountMenuOpen(false);
 
-      window.dispatchEvent(
-        new Event("auth-change")
-      );
+      window.dispatchEvent(new Event("auth-change"));
 
-      navigate("/login", {
-        replace: true,
-      });
+      if (reason === "timeout") {
+        window.alert("You have been logged out due to 15 minutes of inactivity.");
+      }
+
+      navigate("/login", { replace: true });
     };
 
-    const resetInactivityTimer = () => {
-      clearTimeout(inactivityTimer);
+    const scheduleTimeout = () => {
+      if (inactivityTimer) clearTimeout(inactivityTimer);
 
-      inactivityTimer = setTimeout(
-        logoutForInactivity,
-        INACTIVITY_LIMIT
-      );
+      const lastActivity = Number(localStorage.getItem(activityKey)) || Date.now();
+      const elapsed = Date.now() - lastActivity;
+      const remaining = INACTIVITY_LIMIT - elapsed;
+
+      if (remaining <= 0) {
+        removeSession("timeout");
+        return;
+      }
+
+      inactivityTimer = setTimeout(() => {
+        // Re-check the shared timestamp in case another tab was active.
+        scheduleTimeout();
+      }, remaining);
     };
+
+    const recordActivity = () => {
+      if (!localStorage.getItem("token")) return;
+
+      const now = Date.now();
+      // Avoid writing to localStorage on every mouse-move event.
+      if (now - lastActivityWrite >= 1000) {
+        localStorage.setItem(activityKey, String(now));
+        lastActivityWrite = now;
+      }
+
+      scheduleTimeout();
+    };
+
+    const handleStorage = (event) => {
+      if (event.key === activityKey) {
+        scheduleTimeout();
+      } else if (event.key === "token" && !event.newValue) {
+        // Another tab logged out or the session was removed.
+        setIsAuthenticated(false);
+        setUser(null);
+        setAccountMenuOpen(false);
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    if (!localStorage.getItem(activityKey)) {
+      localStorage.setItem(activityKey, String(Date.now()));
+    }
 
     const activityEvents = [
       "mousemove",
@@ -134,24 +175,21 @@ function Navbar() {
       "click",
     ];
 
-    activityEvents.forEach((event) => {
-      window.addEventListener(
-        event,
-        resetInactivityTimer
-      );
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, recordActivity, { passive: true });
     });
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", scheduleTimeout);
 
-    resetInactivityTimer();
+    scheduleTimeout();
 
     return () => {
-      clearTimeout(inactivityTimer);
-
-      activityEvents.forEach((event) => {
-        window.removeEventListener(
-          event,
-          resetInactivityTimer
-        );
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      activityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, recordActivity);
       });
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", scheduleTimeout);
     };
   }, [isAuthenticated, navigate]);
 
@@ -213,6 +251,7 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("movie-hub-last-activity");
 
     setIsAuthenticated(false);
     setUser(null);
