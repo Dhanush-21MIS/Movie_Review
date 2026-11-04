@@ -6,6 +6,7 @@ import {
 
 import Navbar from "./components/Navbar";
 import AdminRoute from "./components/AdminRoutes";
+import Chatbot from "./components/Chatbot";
 
 import Movies from "./pages/Movies";
 import Moviedetails from "./pages/Moviedetails";
@@ -14,71 +15,48 @@ import Register from "./pages/register";
 import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 
-
 function App() {
   return (
     <BrowserRouter>
-
       <Navbar />
 
       <main>
         <Routes>
-
-          {/* ==================================================
-              PUBLIC ROUTES
-          ================================================== */}
+          {/* PUBLIC ROUTES */}
 
           <Route
             path="/"
-            element={
-              <Movies />
-            }
+            element={<Movies />}
           />
 
           <Route
             path="/movies"
-            element={
-              <Movies />
-            }
+            element={<Movies />}
           />
 
           <Route
             path="/movies/:id"
-            element={
-              <Moviedetails />
-            }
+            element={<Moviedetails />}
           />
 
           <Route
             path="/login"
-            element={
-              <Login />
-            }
+            element={<Login />}
           />
 
           <Route
             path="/register"
-            element={
-              <Register />
-            }
+            element={<Register />}
           />
 
-
-          {/* ==================================================
-              USER ACCOUNT
-          ================================================== */}
+          {/* USER ACCOUNT */}
 
           <Route
             path="/account"
-            element={
-              <Account />
-            }
+            element={<Account />}
           />
 
-
-          {/* ==================================================
-              ADMIN
-          ================================================== */}
+          {/* ADMIN */}
 
           <Route
             path="/admin"
@@ -89,23 +67,19 @@ function App() {
             }
           />
 
-          {/* ==================================================
-              FALLBACK
-          ================================================== */}
+          {/* FALLBACK */}
 
           <Route
             path="*"
-            element={
-              <Movies />
-            }
+            element={<Movies />}
           />
-
         </Routes>
       </main>
 
+      {/* MOVIEHUB AI CHATBOT */}
+      <Chatbot />
     </BrowserRouter>
   );
 }
-
 
 export default App;

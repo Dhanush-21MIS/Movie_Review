@@ -3,11 +3,15 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+// Existing routes
 const authRoutes = require("./routes/authRoutes");
 const movieRoutes = require("./routes/movieRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const watchlistRoutes = require("./routes/watchlistRoutes");
+
+// New AI chatbot route
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -17,31 +21,30 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-const MONGO_URI =
-  process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI;
 
 const CLIENT_URL =
-  process.env.CLIENT_URL ||
-  "http://localhost:5173";
+    process.env.CLIENT_URL ||
+    "http://localhost:5173";
 
 // ======================================================
 // BASIC VALIDATION
 // ======================================================
 
 if (!MONGO_URI) {
-  console.error(
-    "ERROR: MONGO_URI is missing from server/.env"
-  );
+    console.error(
+        "ERROR: MONGO_URI is missing from server/.env"
+    );
 
-  process.exit(1);
+    process.exit(1);
 }
 
 if (!process.env.JWT_SECRET) {
-  console.error(
-    "ERROR: JWT_SECRET is missing from server/.env"
-  );
+    console.error(
+        "ERROR: JWT_SECRET is missing from server/.env"
+    );
 
-  process.exit(1);
+    process.exit(1);
 }
 
 // ======================================================
@@ -49,183 +52,186 @@ if (!process.env.JWT_SECRET) {
 // ======================================================
 
 app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      CLIENT_URL,
-    ],
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            CLIENT_URL
+        ],
 
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE",
-      "OPTIONS",
-    ],
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS"
+        ],
 
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-    ],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization"
+        ],
 
-    credentials: true,
-  })
+        credentials: true
+    })
 );
 
 // ======================================================
 // BODY PARSER
 // ======================================================
 
-app.use(
-  express.json()
-);
+app.use(express.json());
 
 app.use(
-  express.urlencoded({
-    extended: true,
-  })
+    express.urlencoded({
+        extended: true
+    })
 );
 
 // ======================================================
 // REQUEST LOGGER
 // ======================================================
 
-app.use(
-  (req, res, next) => {
+app.use((req, res, next) => {
     console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
+        `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
     );
 
     next();
-  }
-);
+});
 
 // ======================================================
 // HEALTH CHECK
 // ======================================================
 
-app.get(
-  "/api/health",
-  (req, res) => {
+app.get("/api/health", (req, res) => {
     return res.status(200).json({
-      success: true,
-      message: "Movie Hub API is running",
-      timestamp: new Date().toISOString(),
+        success: true,
+        message: "Movie Hub API is running",
+        timestamp: new Date().toISOString()
     });
-  }
-);
+});
 
 // ======================================================
 // API ROUTES
 // ======================================================
 
+// Authentication
 app.use(
-  "/api/auth",
-  authRoutes
+    "/api/auth",
+    authRoutes
 );
 
+// Movies
 app.use(
-  "/api/movies",
-  movieRoutes
+    "/api/movies",
+    movieRoutes
 );
 
+// Reviews
 app.use(
-  "/api/reviews",
-  reviewRoutes
+    "/api/reviews",
+    reviewRoutes
 );
 
+// Admin
 app.use(
-  "/api/admin",
-  adminRoutes
+    "/api/admin",
+    adminRoutes
 );
 
-// NEW: Watchlist routes
+// Watchlist
 app.use(
-  "/api/watchlist",
-  watchlistRoutes
+    "/api/watchlist",
+    watchlistRoutes
 );
+
+// AI Movie Chatbot
+app.use(
+    "/api/ai",
+    aiRoutes
+);
+app.post("/api/ai/chat-test", (req, res) => {
+    res.json({
+        success: true,
+        message: "AI route registration is working!"
+    });
+});
 
 // ======================================================
 // 404 API HANDLER
 // ======================================================
 
-app.use(
-  (req, res) => {
+app.use((req, res) => {
     return res.status(404).json({
-      success: false,
-      message:
-        `Route not found: ${req.method} ${req.originalUrl}`,
+        success: false,
+        message: `Route not found: ${req.method} ${req.originalUrl}`
     });
-  }
-);
+});
 
 // ======================================================
 // GLOBAL ERROR HANDLER
 // ======================================================
 
-app.use(
-  (error, req, res, next) => {
+app.use((error, req, res, next) => {
     console.error(
-      "GLOBAL SERVER ERROR:",
-      error
+        "GLOBAL SERVER ERROR:",
+        error
     );
 
     return res.status(500).json({
-      success: false,
-      message:
-        "Internal server error",
+        success: false,
+        message: "Internal server error"
     });
-  }
-);
+});
 
 // ======================================================
 // MONGODB CONNECTION
 // ======================================================
 
 mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log(
-      "MongoDB connected successfully"
-    );
-
-    app.listen(
-      PORT,
-      "0.0.0.0",
-      () => {
+    .connect(MONGO_URI)
+    .then(() => {
         console.log(
-          "================================="
+            "MongoDB connected successfully"
         );
 
-        console.log(
-          `Movie Hub server running on port ${PORT}`
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(
+                "================================="
+            );
+
+            console.log(
+                `Movie Hub server running on port ${PORT}`
+            );
+
+            console.log(
+                `API: http://localhost:${PORT}/api`
+            );
+
+            console.log(
+                `Health: http://localhost:${PORT}/api/health`
+            );
+
+            console.log(
+                `Watchlist: http://localhost:${PORT}/api/watchlist`
+            );
+
+            console.log(
+                `AI Chatbot: http://localhost:${PORT}/api/ai/chat`
+            );
+
+            console.log(
+                "================================="
+            );
+        });
+    })
+    .catch((error) => {
+        console.error(
+            "MongoDB connection failed:",
+            error
         );
 
-        console.log(
-          `API: http://localhost:${PORT}/api`
-        );
-
-        console.log(
-          `Health: http://localhost:${PORT}/api/health`
-        );
-
-        console.log(
-          `Watchlist: http://localhost:${PORT}/api/watchlist`
-        );
-
-        console.log(
-          "================================="
-        );
-      }
-    );
-  })
-  .catch((error) => {
-    console.error(
-      "MongoDB connection failed:",
-      error
-    );
-
-    process.exit(1);
-  });
+        process.exit(1);
+    });
