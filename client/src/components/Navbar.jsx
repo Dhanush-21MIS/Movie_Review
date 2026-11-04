@@ -112,7 +112,7 @@ function Navbar() {
       window.dispatchEvent(new Event("auth-change"));
 
       if (reason === "timeout") {
-        window.alert("You have been logged out due to 15 minutes of inactivity.");
+        window.alert("You have been logged out due to session inactive.");
       }
 
       navigate("/login", { replace: true });
