@@ -1,0 +1,132 @@
+/* Logout/session notification. Kept separate from the site's navbar styles. */
+.navbar-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(420px, calc(100vw - 32px));
+  padding: 16px 14px;
+  border: 1px solid #dbe5df;
+  border-left: 5px solid #16a34a;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.16);
+  animation: navbar-notification-in 180ms ease-out;
+}
+
+.navbar-notification--success {
+  border-left-color: #16a34a;
+}
+
+.navbar-notification--warning {
+  border-color: #fde68a;
+  border-left-color: #d97706;
+}
+
+.navbar-notification--info {
+  border-color: #bfdbfe;
+  border-left-color: #2563eb;
+}
+
+.navbar-notification__icon {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.navbar-notification--warning .navbar-notification__icon {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.navbar-notification--info .navbar-notification__icon {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.navbar-notification__content {
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.navbar-notification__content strong {
+  display: block;
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.navbar-notification__content p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.navbar-notification__close {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  margin: -5px -4px 0 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.navbar-notification__close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.navbar-notification__close:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+@keyframes navbar-notification-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-notification {
+    top: 12px;
+    right: 12px;
+    width: calc(100vw - 24px);
+    padding: 13px 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-notification {
+    animation: none;
+  }
+}

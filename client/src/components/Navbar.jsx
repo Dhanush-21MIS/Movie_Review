@@ -4,6 +4,7 @@ import {
 } from "react-router-dom";
 
 import { useEffect, useRef, useState } from "react";
+import "./Navbar.css";
 
 const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes
 
@@ -16,6 +17,7 @@ function Navbar() {
 
   const [user, setUser] = useState(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [notification, setNotification] = useState(null);
   const accountMenuRef = useRef(null);
 
   // Keep the website in light mode.
@@ -68,7 +70,7 @@ function Navbar() {
   }, []);
 
   // ======================================================
-  // AUTOMATIC SESSION TIMEOUT AFTER 15 MINUTES OF INACTIVITY
+  // AUTOMATIC SESSION TIMEOUT AFTER 5 MINUTES OF INACTIVITY
   // Shared across tabs using localStorage.
   // ======================================================
 
@@ -93,10 +95,14 @@ function Navbar() {
       window.dispatchEvent(new Event("auth-change"));
 
       if (reason === "timeout") {
-        window.alert("You have been logged out due to session inactive.");
+        setNotification({
+          type: "warning",
+          title: "Session expired",
+          message: "You were logged out due to inactivity. Please log in again to continue.",
+        });
       }
 
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     };
 
     const scheduleTimeout = () => {
@@ -138,8 +144,13 @@ function Navbar() {
         setIsAuthenticated(false);
         setUser(null);
         setAccountMenuOpen(false);
+        setNotification({
+          type: "info",
+          title: "Signed out",
+          message: "Your session has ended in another tab.",
+        });
         if (inactivityTimer) clearTimeout(inactivityTimer);
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true });
       }
     };
 
@@ -242,7 +253,13 @@ function Navbar() {
       new Event("auth-change")
     );
 
-    navigate("/login", {
+    setNotification({
+      type: "success",
+      title: "Logged out successfully",
+      message: "You have been signed out of your account.",
+    });
+
+    navigate("/", {
       replace: true,
     });
   };
@@ -267,7 +284,32 @@ function Navbar() {
   // ======================================================
 
   return (
-    <header className="navbar">
+    <>
+      {notification && (
+        <div
+          className={`navbar-notification navbar-notification--${notification.type}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className="navbar-notification__icon" aria-hidden="true">
+            {notification.type === "success" ? "✓" : notification.type === "warning" ? "!" : "i"}
+          </span>
+          <div className="navbar-notification__content">
+            <strong>{notification.title}</strong>
+            <p>{notification.message}</p>
+          </div>
+          <button
+            type="button"
+            className="navbar-notification__close"
+            onClick={() => setNotification(null)}
+            aria-label="Close notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <header className="navbar">
 
       <div className="navbar-container">
 
@@ -427,7 +469,8 @@ function Navbar() {
 
       </div>
 
-    </header>
+      </header>
+    </>
   );
 }
 
